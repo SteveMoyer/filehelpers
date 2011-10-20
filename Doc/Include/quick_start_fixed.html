@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><p>
+    <strong>Note: </strong>VB.NET developers browse the <a href="vb_tips.html">Tips for
+        VB.NET</a> first.</p>
+        <table width="550" align="center" class="note">
+	<tr><td valign="middle" align="center" width="30px" class="note">
+		<a href="FileHelpers_Examples_CSharp_VbNet.zip" ><img src="download32.gif" border=0 alt="Download Example Code"></a>
+	</td>
+	<td valign="middle" class="note">
+        <a href="FileHelpers_Examples_CSharp_VbNet.zip" ><img src="new.gif" width="31" height="12" border=0 >Click HERE To download two example projects  (C# and VB.NET) </a>
+	</td>
+	</tr>
+</table>
+<br />
+    <h2>
+        Quick Start for Fixed Length files(easy <a href="#first"><img src="1.png" width="16" height="16" border="0" align="absbottom"></a><a href="#two"><img src="2.png" width="16" height="16" border="0" align="absbottom"></a><a href="#three"><img src="3.png" width="16" height="16" border="0" align="absbottom" ></a><a href="#four"><img src="4.png" width="16" height="16" border="0" align="absbottom" ></a> steps) 
+    </h2>
+    
+    <blockquote>
+    Or check the <a href="quick_start.html">Delimited File Example</a> or <a href="quick_start_async.html">Record by Record Example</a><br /><br />
+    </blockquote>
+
+    <table width="100%"  border="0">
+      <tr>
+        <td height="123" valign="top"><a name="first"></a><img src="1.png" width="16" height="16" align="left"> </td>
+        <td width="97%" valign="top"><p>To start using the FileHelpers Library you only need to add a reference in your project to the file: <strong>FileHelpers.dll</strong>. you can find it in the Release directory of the distribution. Tip: remember to left the <strong>FileHelpers.xml</strong> file to get Intellisense support. </p>
+          <blockquote>
+            <p><img src="references.png" width="103" height="53"></p>
+          </blockquote></td>
+      </tr>
+      <tr>
+        <td height="163" valign="top"><a name="two"></a><img src="2.png" width="16" height="16" align="left"></td>
+        <td valign="top">
+          <p>Next you need to define a class that maps to the record in the source/detination file.<br>
+            For this example we use a file with this format:</p>
+          <blockquote>
+<textarea name="code" class="c#:nogutter:nocontrols">
+01732Juan Perez           004350011052002
+00554Pedro Gomez          123423006022004
+00112Ramiro Politti       000000001022000
+00924Pablo Ramirez        033213024112002
+...............    
+</textarea>
+          </blockquote></td>
+      </tr>
+      <tr>
+        <td height="259" valign="top">&nbsp;</td>
+        <td valign="top"><p>So you must write this class:</p>
+          <blockquote> <b>C#</b>
+<textarea name="code" class="c#">
+	[FixedLengthRecord()]
+	public class Customer2
+	{
+		[FieldFixedLength(5)]
+		public int CustId;
+		
+		[FieldFixedLength(20)]
+		[FieldTrim(TrimMode.Right)]
+		public string Name;
+
+		[FieldFixedLength(8)]
+		[FieldConverter(typeof(TwoDecimalConverter))]
+		public decimal Balance;
+
+		[FieldFixedLength(8)]
+		[FieldConverter(ConverterKind.Date, "ddMMyyyy")]
+		public DateTime AddedDate;
+
+        // A custom converter
+		internal class TwoDecimalConverter: ConverterBase
+		{
+			public override object StringToField(string from)
+			{
+				decimal res = Convert.ToDecimal(from);
+				return res / 100;
+			}
+	
+			public override string FieldToString(object from)
+			{
+				decimal d = (decimal) from;
+				return Math.Round(d * 100).ToString();
+			}
+		
+		}
+    }
+
+
+</textarea>
+          </blockquote>
+                    <blockquote> <b>VB.NET</b>
+<textarea name="code" class="vb">
+&lt;FixedLengthRecord()> _
+Public Class Customer2
+
+    &lt;FieldFixedLength(5)> _
+    Public CustId As Integer
+
+    &lt;FieldFixedLength(20), _
+     FieldTrimAttribute(TrimMode.Right)> _
+    Public Name As String
+
+    &lt;FieldFixedLength(8), _
+     FieldConverter(GetType(TwoDecimalConverter))> _
+    Public Balance As Decimal
+
+    &lt;FieldFixedLength(8), _
+    FieldConverter(ConverterKind.Date, "ddMMyyyy")> _
+    Public AddedDate As DateTime
+
+    '-> Custom Converter
+	Friend Class TwoDecimalConverter
+		Inherits ConverterBase
+	
+		Public Overrides Function StringToField(ByVal from As String) As Object
+			Dim res As Decimal = Convert.ToDecimal(from)
+			Return res / 100
+		End Function
+	
+		Public Overrides Function FieldToString(ByVal from As Object) As String
+			Dim d As Decimal = CType(from, Decimal)
+			Return Math.Round(d * 100).ToString()
+		End Function
+	
+	End Class
+
+End Class
+
+
+</textarea>
+          </blockquote>
+          </td>
+      </tr>
+      <tr>
+        <td height="185" valign="top"><a name="three"></a><img src="3.png" width="16" height="16" align="left"></td>
+        <td valign="top"><p>Later you need to create a FileHelperEngine and Read/Write files:                        
+            <blockquote><b>C#</b>
+<textarea name="code" class="c#">
+FileHelperEngine engine = new FileHelperEngine(typeof(Customer));
+
+// To Read Use:
+Customer[] res = engine.ReadFile(&quot;FileIn.txt&quot;) as Customer[];
+
+// To Write Use:
+engine.WriteFile(&quot;FileOut.txt&quot;, res);
+</textarea>
+          </blockquote>
+            <blockquote><b>VB.NET</b>
+<textarea name="code" class="vb">
+Dim engine As New FileHelperEngine(GetType( Customer))
+
+' To Read Use:
+Dim res As  Customer() = DirectCast(engine.ReadFile(&quot;FileIn.txt&quot;), Customer())
+
+' To Write Use:
+engine.WriteFile(&quot;FileOut.txt&quot;, res)
+</textarea>
+          </blockquote>
+                    </td>
+      </tr>
+      <tr>
+        <td height="163" valign="top"><a name="four"></a><img src="4.png" width="16" height="16" align="left"></td>
+        <td valign="top"><p>Finally we can use the res array to access each item in the file, for example: </p>
+          <blockquote><b>C#</b>
+<textarea name="code" class="c#">
+foreach (Customer cust in res)
+ {
+    Console.WriteLine(&quot;Customer Info:&quot;);
+    Console.WriteLine(cust.Name + &quot; - &quot; +
+                      cust.AddedDate.ToString(&quot;dd/MM/yy&quot;));
+ }
+</textarea>
+          </blockquote>
+          <blockquote><b>VB.NET</b>
+<textarea name="code" class="vb">
+For Each cust As Customer In res)
+ 
+    Console.WriteLine(&quot;Customer Info:&quot;)
+    Console.WriteLine(cust.Name + &quot; - &quot; + _
+                      cust.AddedDate.ToString(&quot;dd/MM/yy&quot;))
+Next
+</textarea>
+          </blockquote>
+          </td>
+      </tr>
+    </table>      
+                  
+		{$FOOTER$}
+  </td>
+</tr>
+</table>
+
+</BODY></HTML>

@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><div id=contentdiv>
+        <h2>Arguments for the Default Converters of the library.</h2>
+        <blockquote>
+          <p>Here is a list of the parameters that you can give to the default converters:</p>
+          <p><b>All the parameters must be string (because object parameters don't work in VB.NET)</b></p>
+        </blockquote>
+        <h2>ConverterKind.Date</h2>
+<BLOCKQUOTE>
+<p>
+			<b>Arg1:</b> A string he DateTime format that the engine pass to the DateTime.Parse function.
+</p>
+<p>
+			<b>Examples:</b><br />
+			
+			<textarea name="code" class="c#">
+
+// By default the engines use: "ddMMyyyy"
+[FieldConverter(ConverterKind.Date)]
+public DateTime ShippedDate;
+
+// Parse these dates:  1-1-2006   01-1-2006   30-01-2006
+[FieldConverter(ConverterKind.Date, "d-M-yyyy" )]
+public DateTime ShippedDate;
+
+// Parse these dates:  1-1-2006   01-1-2006   01-30-2006
+[FieldConverter(ConverterKind.Date, "M-d-yyyy" )]
+public DateTime ShippedDate;
+
+// Parse these dates:  01/3/2006   30/02/2006
+[FieldConverter(ConverterKind.Date, "d/M/yyyy" )]
+public DateTime ShippedDate;
+
+// Parse these dates:  01042006   30022006
+[FieldConverter(ConverterKind.Date, "ddMMyyyy" )]
+public DateTime ShippedDate;
+
+// Parse these dates:  04012006   02302006
+[FieldConverter(ConverterKind.Date, "MMddyyyy" )]
+public DateTime ShippedDate;
+
+</textarea><br />
+
+You can check all the supported format strings check the MSDN docs for DateTime.ParseExact (link soon hahah, some googling don't hurt)
+</p>
+</BLOCKQUOTE>
+
+        <h2>ConverterKind.Double, ConverterKind.Single and ConverterKind.Decimal</h2>
+<BLOCKQUOTE>
+<p>
+			<b>Arg1:</b> A string with the char used as DecimalSeparator. Valid Values: "." or ",". <b>By default: "."</b>
+</p>
+<p>
+			<b>Examples:</b><br />
+			
+			<textarea name="code" class="c#">
+
+// "." is the decimal separator by default
+[FieldConverter(ConverterKind.Double)]
+public double Freight;
+
+// "." is the decimal separator. (good for autodocumented code)
+[FieldConverter(ConverterKind.Double, ".")]
+public double Freight;
+
+// "," is the decimal separator.
+[FieldConverter(ConverterKind.Double, ",")]
+public double Freight;
+
+// The same for the other converters:
+// ConverterKind.Decimal and ConverterKind.Single 
+
+</textarea><br />
+
+</p>
+</BLOCKQUOTE>
+        <h2>Integer Converters</h2>
+
+        <b>ConverterKind.Int16, ConverterKind.Int32, ConverterKind.Int64, ConverterKind.Byte, <br />
+		   ConverterKind.UInt16, ConverterKind.UInt32, ConverterKind.UInt64, and ConverterKind.SByte</b>
+<BLOCKQUOTE>
+<p>
+			<b>Arg1:</b> A string with the char used as DecimalSeparator. Valid Values: "." or ",". <b>By default: "."</b>
+</p>
+<p>
+			<b>WARNING:</b> The library request a Decimal Separator here and internally creates the Group Separator with the conterpart (for example if you provide "." uses ",")
+</p>
+<p>
+			<b>Examples:</b><br />
+			
+			<textarea name="code" class="c#">
+
+// "." is the decimal separator by default
+// allows you to parse:  12,125 or 1,458,385
+[FieldConverter(ConverterKind.Int32)]
+public Int32 Amount;
+
+// using "," as decimal separator
+// allows you to parse:  12.125 or 1.458.385
+[FieldConverter(ConverterKind.Int32, ",")]
+public Int32 Amount;
+
+
+// The same works for the rest of the converts
+
+</textarea><br />
+
+</p>
+</BLOCKQUOTE>
+
+
+<h2>ConverterKind.Boolean</h2>
+<BLOCKQUOTE>
+<p>
+			<b>Arg1:</b> A string thats represents the <b>True</b> value
+			<br />
+			<b>Arg2:</b> A string thats represents the <b>False</b> value
+			<br /><br />
+			By default this converters takes as true the strings "True" (case insensitive) and "1". And writes the string "True" and "False" when converting the field to string.
+</p>
+<p>
+			<b>Examples:</b><br />
+			
+			<textarea name="code" class="c#">
+
+// By default it reads as true the strings "True" (Case insensitive) and "1"
+[FieldConverter(ConverterKind.Boolean)]
+public bool Shipped;
+
+// Takes as true the string "verdad" and as false the string "mentira" (case insensitive)
+[FieldConverter(ConverterKind.Boolean, "Verdad", "MenTiRa")]
+public bool Shipped;
+
+// Takes as true the string "1" and as false the string "0"
+// You need these params if you want to write, because it use "True" and "False"
+[FieldConverter(ConverterKind.Boolean, "1", "0")]
+public bool Shipped;
+
+// Takes as true the string "X" and as false the string "-"
+[FieldConverter(ConverterKind.Boolean, "X", "-")]
+public bool Shipped;
+
+</textarea><br />
+
+</p>
+</BLOCKQUOTE>
+
+
+								{$FOOTER$}
+  </td>
+</tr>
+</table>
+
+</BODY></HTML>

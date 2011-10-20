@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+<style type="text/css">
+<!--
+.style1 {color: #FFFFFF}
+-->
+</style>
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><div id=contentdiv> 
+  <h2>
+      Using the Differents Error Modes</h2>
+  <blockquote>
+          <p>
+              The FileHelpers library has support for 3 kinds of error handling.</p>
+      <p>
+          In the standard mode you can catch the exceptions when something fail.</p>
+          <blockquote>
+<textarea name="code" class="c#">
+try
+{
+  records = engine.Read...
+}
+catch(Exception ex)
+{
+  Console.WriteLine(ex.ToString());
+}
+</textarea>
+          </blockquote>
+          <p>
+              This approach not is bad but you lose some info about the current record and you
+              can't use the records array because is not asigned.</p>
+      <p>
+          A more intelligent way is usign the <a href="FileHelpers.ErrorMode.html">ErrorMode</a>.SaveAndContinue
+          of the ErrorManager:</p>
+      <blockquote>
+<textarea name="code" class="c#">
+
+engine.ErrorManager.ErrorMode = ErrorMode.SaveAndContinue;
+
+records = engine.ReadFile(...
+
+if (engine.ErrorManager.HasErrors)
+   foreach (ErrorInfo err in engine.ErrorManager.Errors)
+   {
+      Console.WriteLine(err.LineNumber); 
+      Console.WriteLine(err.RecordString);
+      Console.WriteLine(err.ExceptionInfo.ToString());`
+   }
+ 
+</textarea>
+          </blockquote>
+          <p>
+              Using the engine like this you have the good records in the records array and in
+              the ErrorManager you have te records with errors and can do wherever you want.</p>
+      <p>
+          Another option is to ignore the errors and continue how is showed in this example</p>
+          <blockquote>
+<textarea name="code" class="c#">
+engine.ErrorManager.ErrorMode = ErrorMode.IgnoreAndContinue;
+
+records = engine.ReadFile(...
+</textarea>
+          </blockquote>
+          <p>
+              In the records array you only have the good records.</p>
+  </blockquote>
+    <h2>
+        Saving and Loading Errors</h2>
+    <blockquote>
+        <p>
+            One intersting feature is the method in the ErrorManager to save the errors to a
+            file files, you can do this</p>
+        <blockquote>
+<textarea name="code" class="c#">
+engine.ErrorManager.ErrorMode = ErrorMode.SaveAndContinue;
+
+records = engine.ReadFile(...
+
+if (engine.ErrorManager.HasErrors)
+   engine.ErrorManager.SaveErrors("errors.txt"); 
+</textarea>
+        </blockquote>
+        <p>
+            To load a file with errors you can use the static method
+        </p>
+        <blockquote>
+<textarea name="code" class="c#">
+   
+   ErrorInfo[] errores = ErrorManager.LoadErrors("errors.txt");
+
+</textarea>
+        </blockquote>
+    </blockquote>
+
+		{$FOOTER$}
+</tr>
+</table>
+
+
+</BODY></HTML>

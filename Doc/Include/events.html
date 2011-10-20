@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+<style type="text/css">
+<!--
+.style1 {color: #FFFFFF}
+-->
+</style>
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><div id=contentdiv> 
+  <h2>Events Architecture</h2>
+  <blockquote>
+          <p>Some time you need to ignore certain lines in files or you need to change a value after the record is filled, etc.</p>
+
+          <p>To solve these problems I´ve add a event architecture in the FileHelperEngine (in the future in all the others) </p>
+
+          <p>The events are 4 (2 for read and 2 for write ops):</p>
+          
+          <blockquote>
+          <ul>
+			<li>BeforeReadRecord
+			<li>AfterReadRecord
+			<li>BeforeWriteRecord
+			<li>AfterWriteRecord			
+          </ul>
+
+          </blockquote>
+          <p>The names said all right ?</p>
+            </blockquote>
+
+<h2>The Example</h2>
+            <blockquote>
+          <p>Supose that you need to parse a txt report from a legacy system with these format</p>
+            <blockquote>
+<textarea name="code" class="c#:nogutter:nocontrols">
+-----------------------------------------------------
+              XXX Enterprise
+-----------------------------------------------------
+10249   TOMSP  05071996      11.61
+10250   HANAR  08071996      65.83
+10251   VICTE  08071996      41.34
+...............          
+                                       Page 1
+-----------------------------------------------------
+              XXX Enterprise
+-----------------------------------------------------
+10269   TOMSP  05071996      11.61
+10230   HANAR  08071996      65.83
+10151   VICTE  08071996      41.34
+...............          
+                                       Page 2
+And so on !!                                       
+</textarea>
+</blockquote>
+          <p>You must declare a Record Mapping Class for the main record:</p>
+          <blockquote>
+<textarea name="code" class="c#">
+[FixedLengthRecord(FixedMode.AllowVariableLength)]
+								
+ [FixedLengthRecord]
+ public class OrdersFixed
+ {
+   [FieldFixedLength(7)]
+   public int OrderID;
+   
+   [FieldFixedLength(8)]
+   public string CustomerID;
+
+   [FieldFixedLength(8)]
+   public DateTime OrderDate;
+
+   [FieldFixedLength(11)]
+   public decimal Freight;
+ }
+</textarea>
+          </blockquote>
+          <p>So now is the time where we instanciate the engine and hook to the events.</p>
+          <blockquote>
+<textarea name="code" class="c#">
+FileHelperEngine engine = new FileHelperEngine(typeof(Orders));
+engine.BeforeReadRecord += new BeforeReadRecordHandler(BeforeEvent);
+
+Orders[] res = engine.ReadFile("report.txt") as Orders[];
+
+</textarea>
+          
+    </blockquote>
+          
+          <p>So in the event method we ignore the lines with spaces and -</p>
+          <blockquote>
+<textarea name="code" class="c#">
+		private void BeforeEvent(EngineBase engine, BeforeReadRecordEventArgs e)
+		{
+			if (e.RecordLine.StartsWith(" ") || e.RecordLine.StartsWith("-"))
+				e.SkipThisRecord = true;
+		}
+</textarea>
+
+    </blockquote>
+          
+<table width="500" align="center" class="note">
+	<td valign="middle" align="center" class="note">
+        <b>Note: if you change the RecordLine the engine use the changed value<br/>This can be useful in some cases but you must be carefull</b>
+	</td>
+	</tr>
+</table>          
+
+  </blockquote>
+
+								{$FOOTER$}
+</tr>
+</table>
+
+</BODY></HTML>

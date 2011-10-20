@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+<style type="text/css">
+<!--
+.style1 {color: #FFFFFF}
+-->
+</style>
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><div id=contentdiv> 
+  <h2>Easy Example (using Generics)</h2>
+  <blockquote>
+          <p>If you have a source file like this, separated by a |:</p>
+          <blockquote>
+<textarea name="code" class="c#">
+10248|VINET|04071996|32.38
+10249|TOMSP|05071996|11.61
+10250|HANAR|08071996|65.83
+10251|VICTE|08071996|41.34
+...............
+</textarea>
+          </blockquote>
+          <p>You must declare a Record Mapping Class:</p>
+          <blockquote>
+<textarea name="code" class="c#">
+[DelimitedRecord(&quot;|&quot;)]
+public class Orders
+{
+   public int OrderID;
+
+   public string CustomerID;
+
+   [FieldConverter(ConverterKind.Date, &quot;ddMMyyyy&quot;)]
+   public DateTime OrderDate;
+
+   public decimal Freight;
+}
+
+</textarea>
+          </blockquote>
+          <p>Finally you must to instanciate a FileHelperEngine and Read/Write files:</p>
+          <blockquote>
+<textarea name="code" class="c#">
+
+FileHelperEngine&lt;Orders&gt; engine = new FileHelperEngine&lt;Orders&gt;();
+
+// to Read use:
+Orders[] res = engine.ReadFile(&quot;TestIn.txt&quot;);
+
+// to Write use:
+engine.WriteFile(&quot;TestOut.txt&quot;, res);
+</textarea>
+          </blockquote>
+          <p>Now you have an Orders array named res where every item in the array is an Order object. If you want to access one of the fields let the IntelliSense of the Visual Studio to bring up the options for you. </p>
+          <blockquote>
+            <blockquote>
+              <p><img src="vs_orders.png" width="165" height="93"></p>
+            </blockquote>
+          </blockquote>
+  </blockquote>
+
+		{$FOOTER$}
+</tr>
+</table>
+
+</BODY></HTML>

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>FileHelpers Library - Marcos Meli</TITLE>
+<LINK href="/favicon.ico" rel="SHORTCUT ICON"><LINK 
+href="global.css" type=text/css 
+rel=stylesheet>
+<link type="text/css" rel="stylesheet" href="SyntaxHighlighter.css"></link>
+
+<meta NAME="Description"        content="An easy to use .NET library to read/write data from fixed length or delimited files or streams. It has support to import/export data from different data sources." />
+<meta name="Author"             content="Marcos Meli" />
+<meta NAME="keywords" Content="filehelpers,CSV,Marcos_Meli,C#,free,opensource,Devoo.net,Delimited Files,Import/Export">
+<meta NAME="Copyright" CONTENT="Copyright 2005-07 to Marcos Meli - www.Devoo.net. All Rights Reserved.">
+
+<style type="text/css">
+<!--
+.style1 {color: #FFFFFF}
+-->
+</style>
+</HEAD>
+<BODY   text=black vLink=purple aLink=red link=blue 
+bgColor=white leftMargin=0 topMargin=0>
+
+		{$HEADER$}
+
+
+<table width="100%" cellpadding="5" cellspacing="5">
+<tr><td><div id=contentdiv> 
+  <h2>
+      File Transform Engine</h2>
+  <blockquote>
+          <p>
+              This engine helps to change the record type of a file for example if you want to
+              change a CSV file
+          </p>
+          <blockquote>
+<textarea name="code" class="c#">
+
+ALFKI,Alfreds Futterkiste,Maria Anders
+ANATR,Ana Trujillo Emparedados y helados,Ana Trujillo
+ANTON,Antonio Moreno Taquería,Antonio Moreno
+AROUT,Around the Horn,Thomas Hardy
+...
+
+</textarea>
+          </blockquote>
+          <p>
+              to this fixed length format</p><blockquote>
+<textarea name="code" class="c#">
+
+ALFKI     Alfreds Futterkiste                               Maria Anders                                                
+ANATR     Ana Trujillo Emparedados y helados                Ana Trujillo                                                
+ANTON     Antonio Moreno Taquería                           Antonio Moreno                                              
+AROUT     Around the Horn                                   Thomas Hardy                                                
+...
+
+</textarea>
+          </blockquote>
+      <p>
+          You must define this two classes (see the TransformToRecord attribute):</p>
+          <blockquote>
+<textarea name="code" class="c#">
+
+    [DelimitedRecord(",")]
+    private class FromClass
+    {
+        public string CustomerId;
+        public string CompanyName;
+        public string CustomerName;
+
+        [TransformToRecord(typeof(ToClass))]
+        public ToClass Transform()
+        {
+            ToClass res = new ToClass();
+            res.CustomerId = CustomerId;
+            res.CompanyName = CompanyName;
+            res.CustomerName = CustomerName;
+            return res;
+        }
+    }
+	
+    [FixedLengthRecord()]
+    private class ToClass
+    {
+        [FieldFixedLength(10)]
+        public string CustomerId;
+
+        [FieldFixedLength(50)]
+        public string CompanyName;
+
+        [FieldFixedLength(60)]
+        public string CustomerName;
+    }
+
+</textarea>
+          </blockquote>
+          <p>Finally the code to transform the file</p>
+          <blockquote>
+<textarea name="code" class="c#">
+
+FileTransformEngine link = new FileTransformEngine(typeof(FromClass), typeof(ToClass));
+
+link.TransformFile1To2("source.txt", "dest.txt");
+</textarea>
+          </blockquote>
+          <p>
+              What more simple ??</p>
+  </blockquote>
+
+		{$FOOTER$}
+</tr>
+</table>
+
+</BODY></HTML>
